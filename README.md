@@ -1,0 +1,6 @@
+[docker-compose.yml](https://github.com/user-attachments/files/24928291/docker-compose.yml)
+[App.js](https://github.com/user-attachments/files/24928263/App.js)
+[server.js](https://github.com/user-attachments/files/24928234/server.js)
+[producer.js](https://github.com/user-attachments/files/24928232/producer.js)
+[package-lock.json](https://github.com/user-attachments/files/24928225/package-lock.json)
+[package.json](https://github.com/user-attachments/files/24928222/package.json)
