@@ -1,0 +1,52 @@
+{% extends 'layout.html' %}
+{% block title %}My Results{% endblock %}
+{% block content %}
+<div class="max-w-4xl mx-auto py-8">
+  <h2 class="text-2xl font-semibold mb-6">My Semester Results</h2>
+  <div class="space-y-8">
+    {% for rpt in reports %}
+      <div class="bg-white p-6 rounded-lg shadow">
+        <h3 class="text-xl font-medium mb-4">{{ rpt.semester.name }}</h3>
+        <table class="w-full mb-4">
+          <thead class="border-b">
+            <tr>
+              <th class="py-2 text-left">Course</th>
+              <th class="py-2 text-left">Score</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for m in rpt.semester.marks|selectattr('student_id','equalto',current_user.student.id) %}
+            <tr>
+              <td class="py-1">{{ m.course.title }}</td>
+              <td class="py-1">{{ m.score }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <p class="font-semibold">
+          Mean: {{ rpt.mean_score|round(2) }} &mdash;
+          Grade: <span class="text-blue-600">{{ rpt.letter_grade }}</span>
+        </p>
+        <p class="mt-2">Recommendation: {{ rpt.recommendation }}</p>
+
+        {% if rpt.letter_grade == 'E' %}
+          <form
+            method="post"
+            action="{{ url_for('student.apply_supplementary', report_id=rpt.id) }}"
+            class="mt-4"
+          >
+            <button
+              type="submit"
+              class="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600"
+            >
+              Apply for Supplementary
+            </button>
+          </form>
+        {% endif %}
+      </div>
+    {% else %}
+      <p>No results available yet.</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

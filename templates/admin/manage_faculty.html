@@ -1,0 +1,52 @@
+{% extends 'layout.html' %}
+{% block title %}Manage Faculties{% endblock %}
+
+{% block content %}
+<h2 class="text-3xl mb-6">Manage Faculties</h2>
+
+<form method="post" class="bg-white p-6 rounded shadow mb-8">
+  <div>
+    <label class="block mb-1">New Faculty Name</label>
+    <input
+      type="text"
+      name="name"
+      value="{{ request.form.name or '' }}"
+      class="w-full border px-3 py-2 rounded"
+      placeholder="e.g. Science"
+      required
+    >
+    {% if errors.name %}
+      <p class="text-red-600 mt-1">{{ errors.name }}</p>
+    {% endif %}
+  </div>
+  <button class="mt-4 bg-blue-600 text-white px-4 py-2 rounded">
+    Add Faculty
+  </button>
+</form>
+
+<table class="min-w-full bg-white shadow rounded">
+  <thead>
+    <tr>
+      <th class="px-6 py-3">ID</th>
+      <th class="px-6 py-3">Name</th>
+      <th class="px-6 py-3">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for fac in faculties %}
+      <tr class="border-t">
+        <td class="px-6 py-3">{{ fac.id }}</td>
+        <td class="px-6 py-3">{{ fac.name }}</td>
+        <td class="px-6 py-3">
+          <a
+            href="{{ url_for('admin.edit_faculty', fac_id=fac.id) }}"
+            class="text-blue-600 hover:underline"
+          >
+            Edit
+          </a>
+        </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

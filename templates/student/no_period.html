@@ -1,0 +1,19 @@
+{% extends 'layout.html' %}
+{% block title %}No Active Period{% endblock %}
+
+{% block content %}
+<div class="min-h-screen flex items-center justify-center bg-gray-100">
+  <div class="bg-white shadow-md rounded-lg p-8 text-center max-w-sm">
+    <h2 class="text-2xl font-semibold text-gray-800 mb-4">
+      No Active Reporting Period
+    </h2>
+    <p class="text-gray-600 mb-6">
+      There isn’t an open reporting window right now. Please check back later.
+    </p>
+    <a href="{{ url_for('main.dashboard') }}"
+       class="inline-block bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition">
+      Back to Dashboard
+    </a>
+  </div>
+</div>
+{% endblock %}

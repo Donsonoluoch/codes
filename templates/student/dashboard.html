@@ -1,0 +1,133 @@
+{# templates/student/dashboard.html #}
+{% extends 'layout.html' %}
+{% block title %}Student Dashboard{% endblock %}
+
+{% block content %}
+<div class="flex min-h-screen bg-gray-100">
+
+  <aside
+    id="sidebar"
+    class="hidden md:block w-64 bg-gray-800 text-gray-100 p-6 space-y-6"
+  >
+    <ul class="space-y-4">
+      <li>
+        <a href="{{ url_for('main.dashboard') }}"
+           class="block py-2 px-3 rounded hover:bg-gray-700">
+          Dashboard
+        </a>
+      </li>
+      <li>
+        <a href="{{ url_for('student.profile') }}"
+           class="block py-2 px-3 rounded hover:bg-gray-700">
+          Edit Profile
+        </a>
+      </li>
+      <li>
+        <a href="{{ url_for('student.my_results') }}"
+           class="block py-2 px-3 rounded hover:bg-gray-700">
+          My Results
+        </a>
+      </li>
+      <li>
+        <a href="{{ url_for('student.submit_report') }}"
+           class="block py-2 px-3 rounded hover:bg-gray-700">
+          Submit Report
+        </a>
+      </li>
+      <li>
+        <a href="{{ url_for('student.defer_request') }}"
+           class="block py-2 px-3 rounded hover:bg-gray-700">
+          Deferment
+        </a>
+      </li>
+    </ul>
+    <div>
+      <a id="logout"
+         href="{{ url_for('auth.logout') }}"
+         class="block text-red-400 hover:text-red-200 mt-auto">
+        Logout
+      </a>
+    </div>
+  </aside>
+
+  <div class="flex-1 p-6">
+    <button
+      id="sidebarToggle"
+      class="md:hidden mb-6 p-2 bg-gray-800 text-white rounded"
+      aria-label="Toggle sidebar"
+    >
+      <span>☰</span>
+    </button>
+
+    <h1 class="text-3xl font-semibold mb-8">
+      Welcome, {{ current_user.name }}!
+    </h1>
+
+    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <div class="p-6 bg-white rounded-lg shadow text-center">
+        <h2 class="text-lg font-medium">Total Courses Enrolled</h2>
+        <p class="mt-2 text-2xl font-bold">{{ stats.total_courses }}</p>
+      </div>
+      <div class="p-6 bg-white rounded-lg shadow text-center">
+        <h2 class="text-lg font-medium">Active Enrollments</h2>
+        <p class="mt-2 text-2xl font-bold">{{ stats.active_enrollments }}</p>
+      </div>
+      <div class="p-6 bg-white rounded-lg shadow text-center">
+        <h2 class="text-lg font-medium">Completed Courses</h2>
+        <p class="mt-2 text-2xl font-bold">{{ stats.completed_courses }}</p>
+      </div>
+      <div class="p-6 bg-white rounded-lg shadow text-center">
+        <h2 class="text-lg font-medium">Open Academic Issues</h2>
+        <p class="mt-2 text-2xl font-bold">{{ stats.open_issues }}</p>
+      </div>
+    </div>
+
+    <footer class="mt-12 bg-gray-800 text-gray-300">
+      <div class="max-w-6xl mx-auto px-6 py-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+        <div>
+          <h3 class="text-xl font-semibold mb-3 text-white">About Us</h3>
+          <p class="text-sm">
+            We are dedicated to providing high-quality educational resources
+            and a seamless learning experience.
+          </p>
+        </div>
+
+        <div>
+          <h3 class="text-xl font-semibold mb-3 text-white">Quick Links</h3>
+          <ul class="space-y-2 text-sm">
+            <li><a href="#" class="hover:text-white">Home</a></li>
+            <li><a href="#" class="hover:text-white">Courses</a></li>
+            <li><a href="#" class="hover:text-white">About</a></li>
+            <li><a href="#" class="hover:text-white">Contact</a></li>
+            <li><a href="#" class="hover:text-white">Privacy Policy</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h3 class="text-xl font-semibold mb-3 text-white">Contact Us</h3>
+          <p class="text-sm">Email: info@StudentMIS.com</p>
+          <p class="text-sm">Phone: +1 (123) 456-7890</p>
+          <p class="text-sm">Address: 123 Learning Lane, Nairobi, Kenya</p>
+        </div>
+      </div>
+
+      <div class="border-t border-gray-700 py-4">
+        <p class="text-center text-sm">
+          &copy; <span id="current-year"></span> StudentMIS. All rights reserved.
+        </p>
+      </div>
+    </footer>
+  </div>
+</div>
+
+<script>
+  // Toggle sidebar on mobile
+  document.getElementById('sidebarToggle')
+    .addEventListener('click', () => {
+      document.getElementById('sidebar').classList.toggle('hidden')
+    })
+
+  // Update year in footer
+  document.getElementById('current-year').textContent = new Date().getFullYear()
+</script>
+{% endblock %}

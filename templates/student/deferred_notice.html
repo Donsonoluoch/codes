@@ -1,0 +1,16 @@
+{# templates/student/deferred_notice.html #}
+{% extends 'layout.html' %}
+{% block title %}Account Deferred{% endblock %}
+
+{% block content %}
+  <div class="max-w-md mx-auto p-6 bg-yellow-50 border-l-4 border-yellow-400">
+    <h2 class="text-xl font-semibold mb-3">Your account is deferred</h2>
+    <p>You’ve been marked as deferred and can’t access student features right now.</p>
+    <p class="mt-4">
+      <a href="{{ url_for('student.resume_studies') }}"
+         class="text-blue-600 hover:underline">
+        Resume Your Studies
+      </a>
+    </p>
+  </div>
+{% endblock %}

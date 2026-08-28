@@ -1,0 +1,135 @@
+{# templates/admin/dashboard.html #}
+{% extends 'layout.html' %}
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="flex min-h-screen bg-gray-100">
+
+  <!-- Sidebar -->
+  <aside
+    id="sidebar"
+    class="hidden md:block w-64 bg-gray-800 text-gray-100 p-6 space-y-6"
+  >
+    <ul class="space-y-4">
+      <li>
+        <a
+          href="{{ url_for('main.dashboard') }}"
+          class="block py-2 px-3 rounded hover:bg-gray-700"
+        >
+          Dashboard
+        </a>
+      </li>
+      <li>
+  <a
+    href="{{ url_for('admin.manage_faculty') }}"
+    class="block py-2 px-3 rounded hover:bg-gray-700"
+  >
+    Manage Faculties
+  </a>
+</li>
+
+      <li>
+        <a
+          href="{{ url_for('admin.manage_course') }}"
+          class="block py-2 px-3 rounded hover:bg-gray-700"
+        >
+          Manage Course
+        </a>
+      </li>
+      <a
+          href="{{ url_for('admin.manage_semesters') }}"
+          class="block py-2 px-3 rounded hover:bg-gray-700"
+        >
+          Manage semesters
+        </a>
+      </li>
+      <li>
+        <a
+          href="{{ url_for('admin.add_student') }}"
+          class="block py-2 px-3 rounded hover:bg-gray-700"
+        >
+          Add Student
+        </a>
+      </li>
+      <li>
+        <a
+          href="{{ url_for('admin.upload_marks') }}"
+          class="block py-2 px-3 rounded hover:bg-gray-700"
+        >
+          Upload Marks
+        </a>
+      </li>
+      <li>
+        <a
+          href="{{ url_for('admin.reports') }}"
+          class="block py-2 px-3 rounded hover:bg-gray-700"
+        >
+          View Reports
+        </a>
+      </li>
+       <li>
+    <a href="{{ url_for('admin.defer_list') }}"
+     class="block py-2 px-3 rounded hover:bg-gray-700"
+    >
+      View All Deferment Requests
+    </a>
+  </li>      
+      <li>
+        <a
+          href="{{ url_for('admin.list_periods') }}"
+          class="block py-2 px-3 rounded hover:bg-gray-700"
+        >
+          Reporting Periods
+        </a>
+      </li>
+    </ul>
+    <div>
+      <a
+        id="logout"
+        href="{{ url_for('auth.logout') }}"
+        class="block mt-auto text-red-400 hover:text-red-200"
+      >
+        Logout
+      </a>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <div class="flex-1 p-6">
+    <!-- Mobile Sidebar Toggle -->
+    <button
+      id="sidebarToggle"
+      class="md:hidden mb-6 p-2 bg-gray-800 text-white rounded"
+      aria-label="Toggle sidebar"
+    >
+      <span>☰</span>
+    </button>
+
+    <h1 class="text-3xl font-semibold mb-4">
+      Welcome, {{ current_user.name }}!
+    </h1>
+
+    <!-- Example Dashboard Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div class="p-6 bg-white rounded-lg shadow">
+        <h2 class="text-xl font-medium mb-2">Total Students</h2>
+        <p class="text-3xl font-bold">123</p>
+      </div>
+      <div class="p-6 bg-white rounded-lg shadow">
+        <h2 class="text-xl font-medium mb-2">Courses Offered</h2>
+        <p class="text-3xl font-bold">8</p>
+      </div>
+      <div class="p-6 bg-white rounded-lg shadow">
+        <h2 class="text-xl font-medium mb-2">Pending Reports</h2>
+        <p class="text-3xl font-bold">4</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.getElementById('sidebarToggle').addEventListener('click', () => {
+    document.getElementById('sidebar').classList.toggle('hidden')
+  })
+</script>
+{% endblock %}

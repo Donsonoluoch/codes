@@ -1,0 +1,177 @@
+{% extends 'layout.html' %}
+{% block title %}Manage Courses{% endblock %}
+
+{% block content %}
+<div class="flex min-h-screen bg-gray-100">
+  <!-- sidebar... same as before -->
+  <div class="flex-1 p-6">
+    <!-- heading, toggle button…  -->
+
+    <h2 class="text-3xl font-semibold mb-6">Create New Course</h2>
+
+    <form
+      method="post"
+      action="{{ url_for('admin.manage_course') }}"
+      class="space-y-6 bg-white p-6 rounded-lg shadow mb-10"
+    >
+      <!-- COURSE TITLE -->
+      <div>
+        <label for="title" class="block text-sm font-medium mb-1">
+          Course Title
+        </label>
+        <input
+          type="text"
+          id="title"
+          name="title"
+          placeholder="Enter course title"
+          value="{{ request.form.title or '' }}"
+          required
+          class="w-full px-3 py-2 border rounded focus:ring-2 focus:ring-blue-500"
+        >
+        {% if errors.title %}
+          <p class="mt-1 text-sm text-red-600">{{ errors.title }}</p>
+        {% endif %}
+      </div>
+
+      <!-- FACULTY -->
+      <div>
+        <label for="faculty_id" class="block text-sm font-medium mb-1">
+          Faculty
+        </label>
+        <select
+          name="faculty_id"
+          id="faculty_id"
+          required
+          class="w-full px-3 py-2 border rounded focus:ring-2 focus:ring-blue-500"
+        >
+          <option value="" disabled
+            {% if not request.form.faculty_id %}selected{% endif %}
+          >
+            Select faculty
+          </option>
+          {% for fac in faculties %}
+            <option
+              value="{{ fac.id }}"
+             {% if fac.id == selected_faculty_id %}selected{% endif %}
+            >
+              {{ fac.name }}
+            </option>
+          {% endfor %}
+        </select>
+        {% if errors.faculty_id %}
+          <p class="mt-1 text-sm text-red-600">{{ errors.faculty_id }}</p>
+        {% endif %}
+      </div>
+
+      <!-- START DATE -->
+      <div>
+        <label for="start_date" class="block text-sm font-medium mb-1">
+          Start Date
+        </label>
+        <input
+          type="date"
+          id="start_date"
+          name="start_date"
+          value="{{ request.form.start_date or '' }}"
+          required
+          class="w-full px-3 py-2 border rounded focus:ring-2 focus:ring-blue-500"
+        >
+        {% if errors.start_date %}
+          <p class="mt-1 text-sm text-red-600">{{ errors.start_date }}</p>
+        {% endif %}
+      </div>
+
+      <!-- END DATE -->
+      <div>
+        <label for="end_date" class="block text-sm font-medium mb-1">
+          End Date
+        </label>
+        <input
+          type="date"
+          id="end_date"
+          name="end_date"
+          value="{{ request.form.end_date or '' }}"
+          required
+          class="w-full px-3 py-2 border rounded focus:ring-2 focus:ring-blue-500"
+        >
+        {% if errors.end_date %}
+          <p class="mt-1 text-sm text-red-600">{{ errors.end_date }}</p>
+        {% endif %}
+      </div>
+
+      <!-- ACTIONS -->
+      <div class="flex space-x-4 pt-4">
+        <button
+          type="submit"
+          class="px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+        >
+          Create Course
+        </button>
+        <a
+          href="{{ url_for('main.dashboard') }}"
+          class="px-6 py-2 bg-gray-600 text-white rounded hover:bg-gray-700"
+        >
+          Cancel
+        </a>
+      </div>
+    </form>
+
+    <!-- EXISTING COURSES TABLE -->
+    <h3 class="text-2xl font-semibold mb-4">Existing Courses</h3>
+    <div class="overflow-x-auto bg-white rounded-lg shadow">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+              Title
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+              Faculty
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+              Start Date
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+              End Date
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+              Actions
+            </th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          {% for c in courses %}
+            <tr>
+              <td class="px-6 py-4 whitespace-nowrap">{{ c.title }}</td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                {{ c.faculty.name if c.faculty else '—' }}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                {{ c.start_date.strftime('%Y-%m-%d') }}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                {{ c.end_date.strftime('%Y-%m-%d') }}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <a
+                  href="{{ url_for('admin.edit_course', course_id=c.id) }}"
+                  class="text-blue-600 hover:text-blue-900"
+                >
+                  Edit
+                </a>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  document.getElementById('sidebarToggle').addEventListener('click', () => {
+    document.getElementById('sidebar').classList.toggle('hidden')
+  })
+</script>
+{% endblock %}

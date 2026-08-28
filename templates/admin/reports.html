@@ -1,0 +1,370 @@
+{# templates/admin/report.html #}
+{% extends 'layout.html' %}
+{% block title %}Admin Reports{% endblock %}
+
+{% block content %}
+<div class="flex min-h-screen bg-gray-100">
+
+  <!-- Sidebar -->
+  <aside
+    id="sidebar"
+    class="hidden md:block w-64 bg-gray-800 text-gray-100 p-6 space-y-6"
+  >
+    <ul class="space-y-4">
+        <li>
+        <a
+          href="{{ url_for('main.dashboard') }}"
+          class="block py-2 px-3 rounded hover:bg-gray-700"
+        >
+          Dashboard
+        </a>
+      </li>
+      <li>
+        <a
+          href="{{ url_for('admin.manage_course') }}"
+          class="block py-2 px-3 rounded hover:bg-gray-700"
+        >
+          Manage Course
+        </a>
+      </li>
+      <li>
+        <a
+          href="{{ url_for('admin.add_student') }}"
+          class="block py-2 px-3 rounded hover:bg-gray-700"
+        >
+          Add Student
+        </a>
+      </li>
+      <li>
+        <a
+          href="{{ url_for('admin.reports') }}"
+          class="block py-2 px-3 rounded bg-gray-700"
+        >
+          View Reports
+        </a>
+      </li>
+      <li>
+        <a
+          href="{{ url_for('admin.list_periods') }}"
+          class="block py-2 px-3 rounded hover:bg-gray-700"
+        >
+          Reporting Periods
+        </a>
+      </li>
+    </ul>
+    <div>
+      <a
+        id="logout"
+        href="{{ url_for('auth.logout') }}"
+        class="block mt-auto text-red-400 hover:text-red-200"
+      >
+        Logout
+      </a>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <div class="flex-1 p-6">
+    <!-- Mobile Sidebar Toggle -->
+    <button
+      id="sidebarToggle"
+      class="md:hidden mb-6 p-2 bg-gray-800 text-white rounded"
+      aria-label="Toggle sidebar"
+    >
+      <span>☰</span>
+    </button>
+
+    <h1 class="text-3xl font-semibold mb-6">Admin Reports</h1>
+
+    <!-- Dashboard Metrics -->
+    <section class="mb-8">
+      <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div class="p-4 bg-white rounded-lg shadow text-center">
+          <h3 class="text-lg font-medium">Total Active Enrollments</h3>
+          <p id="total-active-enrollments" class="mt-2 text-2xl font-bold">Loading...</p>
+        </div>
+        <div class="p-4 bg-white rounded-lg shadow text-center">
+          <h3 class="text-lg font-medium">Courses Expiring Soon</h3>
+          <p id="courses-expiring-soon" class="mt-2 text-2xl font-bold">Loading...</p>
+        </div>
+        <div class="p-4 bg-white rounded-lg shadow text-center">
+          <h3 class="text-lg font-medium">Open Academic Issues</h3>
+          <p id="open-academic-issues" class="mt-2 text-2xl font-bold">Loading...</p>
+        </div>
+        <div class="p-4 bg-white rounded-lg shadow text-center">
+          <h3 class="text-lg font-medium">Total Students</h3>
+          <p id="total-students" class="mt-2 text-2xl font-bold">Loading...</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Report Controls -->
+    <div class="mb-8 flex flex-wrap gap-4 justify-center">
+      <button
+        class="show-report-btn px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+        data-target="activeEnrollmentReport"
+      >
+        Show Active Enrollments
+      </button>
+      <button
+        class="show-report-btn px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+        data-target="expiryNotificationReport"
+      >
+        Show Course Expiry
+      </button>
+      <button
+        class="show-report-btn px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+        data-target="academicIssuesReport"
+      >
+        Show Academic Issues
+      </button>
+    </div>
+
+    <!-- Active Enrollment Report -->
+    <section id="activeEnrollmentReport" class="report-section hidden mb-8 bg-white p-6 rounded-lg shadow">
+      <h2 class="text-2xl font-semibold mb-4">Active Enrollment</h2>
+      <form method="get" class="space-y-4 mb-6">
+        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <label class="block">
+            <span class="text-sm font-medium">Course</span>
+            <select
+              name="course_name"
+              class="mt-1 block w-full px-3 py-2 border rounded focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">All</option>
+              {% for t in courses %}
+                <option value="{{ t }}" {% if filters.course_name==t %}selected{% endif %}>{{ t }}</option>
+              {% endfor %}
+            </select>
+          </label>
+          <label class="block">
+            <span class="text-sm font-medium">From</span>
+            <input
+              type="date"
+              name="start_date"
+              value="{{ filters.start_date }}"
+              class="mt-1 block w-full px-3 py-2 border rounded focus:ring-2 focus:ring-blue-500"
+            >
+          </label>
+          <label class="block">
+            <span class="text-sm font-medium">To</span>
+            <input
+              type="date"
+              name="end_date"
+              value="{{ filters.end_date }}"
+              class="mt-1 block w-full px-3 py-2 border rounded focus:ring-2 focus:ring-blue-500"
+            >
+          </label>
+          <label class="block">
+            <span class="text-sm font-medium">Status</span>
+            <select
+              name="status"
+              class="mt-1 block w-full px-3 py-2 border rounded focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">All</option>
+              <option value="active" {% if filters.status=='active' %}selected{% endif %}>Active</option>
+              <option value="inactive" {% if filters.status=='inactive' %}selected{% endif %}>Inactive</option>
+            </select>
+          </label>
+        </div>
+        <button
+          type="submit"
+          class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition"
+        >
+          Filter
+        </button>
+      </form>
+
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Student ID</th>
+              <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Full Name</th>
+              <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Course Title</th>
+              <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Enrollment Date</th>
+              <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Expiry Date</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            {% for e in active_enrollments %}
+              <tr>
+                <td class="px-4 py-2 whitespace-nowrap">{{ e.student.id }}</td>
+                <td class="px-4 py-2 whitespace-nowrap">{{ e.student.user.name }}</td>
+                <td class="px-4 py-2 whitespace-nowrap">{{ e.course.title }}</td>
+                <td class="px-4 py-2 whitespace-nowrap">{{ e.enroll_date }}</td>
+                <td class="px-4 py-2 whitespace-nowrap">{{ e.expiry_date }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Course Expiry Report -->
+    <section id="expiryNotificationReport" class="report-section hidden mb-8 bg-white p-6 rounded-lg shadow">
+      <h2 class="text-2xl font-semibold mb-4">Course Expiry Notification</h2>
+      <form method="get" class="flex items-end space-x-4 mb-6">
+        <label class="block">
+          <span class="text-sm font-medium">Next</span>
+          <div class="mt-1 flex">
+            <input
+              type="number"
+              name="expiry_days"
+              min="1"
+              value="{{ filters.expiry_days or 7 }}"
+              class="w-20 px-3 py-2 border rounded-l focus:ring-2 focus:ring-blue-500"
+            >
+            <span class="px-3 py-2 border-t border-b border-r rounded-r bg-gray-50">days</span>
+          </div>
+        </label>
+        <button
+          type="submit"
+          class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition"
+        >
+          Show
+        </button>
+      </form>
+
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Student ID</th>
+              <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Full Name</th>
+              <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Course Title</th>
+              <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Expiry Date</th>
+              <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Days Until Expiry</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            {% for e in expiry_notifications %}
+              <tr>
+                <td class="px-4 py-2 whitespace-nowrap">{{ e.student.id }}</td>
+                <td class="px-4 py-2 whitespace-nowrap">{{ e.student.user.name }}</td>
+                <td class="px-4 py-2 whitespace-nowrap">{{ e.course.title }}</td>
+                <td class="px-4 py-2 whitespace-nowrap">{{ e.expiry_date }}</td>
+                <td class="px-4 py-2 whitespace-nowrap">{{ e.days_until_expiry }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Academic Issues Report -->
+    <section id="academicIssuesReport" class="report-section hidden mb-8 bg-white p-6 rounded-lg shadow">
+      <h2 class="text-2xl font-semibold mb-4">Academic Issues</h2>
+      <form method="get" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 mb-6">
+        <label class="block">
+          <span class="text-sm font-medium">Type</span>
+          <select
+            name="issue_type"
+            class="mt-1 block w-full px-3 py-2 border rounded focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="">All</option>
+            {% for it in issue_types %}
+              <option value="{{ it }}" {% if filters.issue_type==it %}selected{% endif %}>{{ it }}</option>
+            {% endfor %}
+          </select>
+        </label>
+        <label class="block">
+          <span class="text-sm font-medium">Status</span>
+          <select
+            name="issue_status"
+            class="mt-1 block w-full px-3 py-2 border rounded focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="">All</option>
+            <option value="open" {% if filters.issue_status=='open' %}selected{% endif %}>Open</option>
+            <option value="in-progress" {% if filters.issue_status=='in-progress' %}selected{% endif %}>In-Progress</option>
+            <option value="resolved" {% if filters.issue_status=='resolved' %}selected{% endif %}>Resolved</option>
+          </select>
+        </label>
+        <label class="block">
+          <span class="text-sm font-medium">From</span>
+          <input
+            type="date"
+            name="issue_start"
+            value="{{ filters.issue_start }}"
+            class="mt-1 block w-full px-3 py-2 border rounded focus:ring-2 focus:ring-blue-500"
+          >
+        </label>
+        <label class="block">
+          <span class="text-sm font-medium">To</span>
+          <input
+            type="date"
+            name="issue_end"
+            value="{{ filters.issue_end }}"
+            class="mt-1 block w-full px-3 py-2 border rounded focus:ring-2 focus:ring-blue-500"
+          >
+        </label>
+        <div class="self-end">
+          <button
+            type="submit"
+            class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition"
+          >
+            Filter
+          </button>
+        </div>
+      </form>
+
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Student ID</th>
+              <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Full Name</th>
+              <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Date Reported</th>
+              <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            {% for issue in issues %}
+              <tr>
+                <td class="px-4 py-2 whitespace-nowrap">{{ issue.student.id }}</td>
+                <td class="px-4 py-2 whitespace-nowrap">{{ issue.student.user.name }}</td>
+                <td class="px-4 py-2 whitespace-nowrap">{{ issue.reported_date }}</td>
+                <td class="px-4 py-2 whitespace-nowrap">{{ issue.status }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+</div>
+
+<script>
+  // Sidebar toggle for mobile
+  document.getElementById('sidebarToggle').addEventListener('click', () => {
+    document.getElementById('sidebar').classList.toggle('hidden')
+  })
+
+  // Fetch real-time dashboard metrics
+  async function fetchDashboardData() {
+    try {
+      const res = await fetch('/admin/api/dashboard_metrics', { credentials: 'include' })
+      const data = await res.json()
+      document.getElementById('total-active-enrollments').textContent = data.total_active_enrollments
+      document.getElementById('courses-expiring-soon').textContent = data.courses_expiring_soon
+      document.getElementById('open-academic-issues').textContent = data.open_academic_issues
+      document.getElementById('total-students').textContent = data.total_students
+    } catch {
+      ['total-active-enrollments','courses-expiring-soon','open-academic-issues','total-students']
+        .forEach(id => document.getElementById(id).textContent = 'N/A')
+    }
+  }
+  fetchDashboardData()
+  setInterval(fetchDashboardData, 30000)
+
+  // Report section toggling
+  const sections = document.querySelectorAll('.report-section')
+  document.querySelectorAll('.show-report-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      sections.forEach(s => s.classList.add('hidden'))
+      document.getElementById(btn.dataset.target).classList.remove('hidden')
+    })
+  })
+</script>
+{% endblock %}
+```
