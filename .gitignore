@@ -1,0 +1,24 @@
+# Python junk
+__pycache__/
+*.py[cod]
+*$py.class
+.env
+.venv
+env/
+venv/
+
+# Databases (CRITICAL)
+instance/
+*.db
+*.sqlite3
+
+# Uploads & User Data
+uploads/
+media/
+
+# IDEs
+.vscode/
+.idea/
+
+# Flask/Alembic
+migrations_backup/
